@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SaaS BOT — Dashboard Progetto</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: rgba(255,255,255,0.075);
+      --panel-2: rgba(255,255,255,0.11);
+      --border: rgba(255,255,255,0.14);
+      --text: #f4f7fb;
+      --muted: #98a6ba;
+      --accent: #55e6a5;
+      --accent-2: #6aa8ff;
+      --accent-3: #c77dff;
+      --danger: #ff6b6b;
+      --warning: #ffd166;
+      --shadow: 0 22px 70px rgba(0,0,0,0.35);
+      --radius: 24px;
+      --radius-sm: 14px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 10% 10%, rgba(85,230,165,0.22), transparent 32%),
+        radial-gradient(circle at 85% 5%, rgba(106,168,255,0.26), transparent 35%),
+        radial-gradient(circle at 70% 75%, rgba(199,125,255,0.18), transparent 30%),
+        var(--bg);
+      min-height: 100vh;
+      padding: 28px;
+    }
+
+    .app {
+      max-width: 1380px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 22px;
+      margin-bottom: 22px;
+    }
+
+    .hero, .card {
+      border: 1px solid var(--border);
+      background: linear-gradient(145deg, rgba(255,255,255,0.105), rgba(255,255,255,0.045));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      border-radius: var(--radius);
+    }
+
+    .hero {
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero:after {
+      content: "";
+      position: absolute;
+      inset: auto -70px -90px auto;
+      width: 280px;
+      height: 280px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(85,230,165,.32), rgba(106,168,255,.1));
+      filter: blur(6px);
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: clamp(34px, 5vw, 64px);
+      line-height: 0.95;
+      margin: 0 0 16px;
+      letter-spacing: -0.06em;
+    }
+
+    .subtitle {
+      color: #cdd7e7;
+      max-width: 780px;
+      font-size: 17px;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    button, .pill {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .18s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.14);
+    }
+
+    button.primary {
+      border: none;
+      background: linear-gradient(135deg, var(--accent), #2dc8ff);
+      color: #06111f;
+    }
+
+    button.danger:hover { background: rgba(255,107,107,0.16); border-color: rgba(255,107,107,.4); }
+
+    .progress-card {
+      padding: 24px;
+    }
+
+    .progress-number {
+      font-size: 58px;
+      letter-spacing: -0.07em;
+      line-height: 1;
+      font-weight: 900;
+      margin: 10px 0;
+    }
+
+    .progress-track {
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.10);
+      overflow: hidden;
+      margin: 14px 0 18px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
+      border-radius: 999px;
+      transition: width .35s ease;
+    }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .stat {
+      padding: 13px;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.09);
+    }
+
+    .stat strong { display:block; font-size: 22px; }
+    .stat span { color: var(--muted); font-size: 12px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .card { padding: 22px; margin-bottom: 22px; }
+    .card h2 { margin: 0 0 14px; font-size: 22px; letter-spacing: -0.025em; }
+    .card h3 { margin: 18px 0 10px; font-size: 15px; color: #eaf1fb; }
+    .muted { color: var(--muted); }
+
+    .stack-list, .decision-list { display: grid; gap: 9px; }
+    .stack-item, .decision-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      padding: 11px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .stack-item span:first-child, .decision-item span:first-child { color: #dce7f8; font-weight: 700; }
+    .tag {
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: rgba(85,230,165,0.12);
+      color: #a8ffd8;
+      border: 1px solid rgba(85,230,165,0.18);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .tag.blue { background: rgba(106,168,255,0.12); color: #cbe0ff; border-color: rgba(106,168,255,0.2); }
+    .tag.purple { background: rgba(199,125,255,0.12); color: #ead1ff; border-color: rgba(199,125,255,0.2); }
+    .tag.yellow { background: rgba(255,209,102,0.12); color: #ffe5a1; border-color: rgba(255,209,102,0.22); }
+
+    .timeline { display: grid; gap: 12px; }
+    .task {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.055);
+      transition: .2s ease;
+    }
+    .task.done {
+      background: linear-gradient(135deg, rgba(85,230,165,0.13), rgba(255,255,255,0.045));
+      border-color: rgba(85,230,165,0.32);
+    }
+    .task:hover { transform: translateY(-1px); background: rgba(255,255,255,0.09); }
+    .task input { width: 20px; height: 20px; accent-color: var(--accent); }
+    .task-title { font-weight: 900; letter-spacing: -0.015em; }
+    .task-desc { color: var(--muted); font-size: 13px; margin-top: 3px; line-height: 1.35; }
+    .task-day { color: #cbd6e6; font-weight: 800; font-size: 12px; white-space: nowrap; }
+
+    .phase-header {
+      margin: 20px 0 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #dfeaff;
+    }
+
+    .phase-header:first-child { margin-top: 0; }
+
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      resize: vertical;
+      color: var(--text);
+      background: rgba(0,0,0,0.22);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 13px;
+      outline: none;
+      font: inherit;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .warning-box {
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255,209,102,0.10);
+      border: 1px solid rgba(255,209,102,0.22);
+      color: #fff2c8;
+      line-height: 1.45;
+      font-size: 14px;
+    }
+
+    .footer {
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+      margin: 28px 0 6px;
+    }
+
+    @media (max-width: 950px) {
+      body { padding: 14px; }
+      header, .grid, .two-col { grid-template-columns: 1fr; }
+      h1 { font-size: 42px; }
+    }
+
+    @media print {
+      body { background: #fff; color: #111; }
+      .hero, .card { box-shadow: none; border: 1px solid #ccc; background: #fff; color: #111; }
+      .muted, .task-desc { color: #555; }
+      button { display:none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <section class="hero">
+        <div class="eyebrow">SaaS BOT — Project Control Center</div>
+        <h1>WhatsApp AI SaaS<br/>Dashboard</h1>
+        <p class="subtitle">Una dashboard interattiva per seguire l’avanzamento del progetto: architettura, provider, task MVP, rischi, decisioni e progresso complessivo. I check vengono salvati automaticamente nel browser.</p>
+        <div class="hero-actions">
+          <button class="primary" onclick="window.print()">Esporta / stampa PDF</button>
+          <button onclick="exportState()">Esporta stato JSON</button>
+          <button class="danger" onclick="resetAll()">Reset progressi</button>
+        </div>
+      </section>
+      <aside class="card progress-card">
+        <div class="eyebrow">Avanzamento MVP</div>
+        <div class="progress-number"><span id="progressNumber">0</span>%</div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        <p class="muted" id="progressLabel">0 task completate su 14.</p>
+        <div class="mini-stats">
+          <div class="stat"><strong id="doneCount">0</strong><span>Completate</span></div>
+          <div class="stat"><strong id="todoCount">14</strong><span>Da fare</span></div>
+          <div class="stat"><strong>14</strong><span>Giorni/task</span></div>
+        </div>
+      </aside>
+    </header>
+
+    <section class="grid">
+      <div>
+        <section class="card">
+          <h2>Visione progetto</h2>
+          <p class="muted">Piattaforma SaaS multi-tenant self-service per PMI: ogni azienda configura il proprio assistente AI operativo su WhatsApp.</p>
+          <div class="decision-list">
+            <div class="decision-item"><span>MVP</span><span class="tag">WhatsApp Bot + Missed-call</span></div>
+            <div class="decision-item"><span>Voice AI</span><span class="tag yellow">Fase 2</span></div>
+            <div class="decision-item"><span>Mercato</span><span class="tag blue">Italia / EU</span></div>
+            <div class="decision-item"><span>Builder</span><span class="tag purple">Founder + Claude Code</span></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Stack MVP</h2>
+          <div class="stack-list">
+            <div class="stack-item"><span>Frontend / API</span><span class="tag">Next.js + TS</span></div>
+            <div class="stack-item"><span>UI</span><span class="tag blue">Tailwind + shadcn/ui</span></div>
+            <div class="stack-item"><span>Database/Auth</span><span class="tag">Supabase</span></div>
+            <div class="stack-item"><span>WhatsApp</span><span class="tag">Meta Cloud API</span></div>
+            <div class="stack-item"><span>Missed-call</span><span class="tag yellow">Twilio Voice</span></div>
+            <div class="stack-item"><span>Booking</span><span class="tag blue">Google Calendar</span></div>
+            <div class="stack-item"><span>LLM prodotto</span><span class="tag purple">OpenAI</span></div>
+            <div class="stack-item"><span>Hosting</span><span class="tag">Vercel</span></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Decisioni bloccate</h2>
+          <div class="warning-box">Non aggiungere provider non previsti nell’MVP. Tutte le integrazioni devono passare da adapter. Stripe completo, Voice AI, CRM, RAG avanzato e altri calendari sono fuori MVP.</div>
+          <h3>Regole tecniche</h3>
+          <div class="decision-list">
+            <div class="decision-item"><span>Multi-tenant</span><span class="tag">organization_id + RLS</span></div>
+            <div class="decision-item"><span>Sicurezza azioni</span><span class="tag">deny-by-default</span></div>
+            <div class="decision-item"><span>Webhook</span><span class="tag blue">verify + async</span></div>
+            <div class="decision-item"><span>Route API</span><span class="tag purple">sottili</span></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Note operative</h2>
+          <textarea id="notes" placeholder="Scrivi qui appunti, problemi, decisioni, link utili, chiavi da recuperare (non incollare segreti reali)..."></textarea>
+        </section>
+      </div>
+
+      <div>
+        <section class="card">
+          <h2>Roadmap interattiva 14 giorni</h2>
+          <p class="muted">Spunta le task man mano che le completate. Il progresso viene salvato automaticamente in questo browser.</p>
+          <div class="phase-header"><strong>Settimana 1 — Fondamenta + primo flusso WhatsApp</strong><span class="tag blue">Core</span></div>
+          <div class="timeline" id="week1"></div>
+          <div class="phase-header"><strong>Settimana 2 — Azioni operative + missed-call</strong><span class="tag purple">MVP</span></div>
+          <div class="timeline" id="week2"></div>
+        </section>
+
+        <section class="card">
+          <h2>Gate di qualità</h2>
+          <div class="two-col" id="gates"></div>
+        </section>
+      </div>
+    </section>
+
+    <div class="footer">Dashboard locale — i dati sono salvati in localStorage del browser. Nessun dato viene inviato online.</div>
+  </main>
+
+  <script>
+    const tasks = [
+      { id: 'd1', day: 'Giorno 1', title: 'Setup infrastruttura', desc: 'Next.js, TypeScript, Tailwind, shadcn/ui, struttura moduli, .env.example, docs ordinate.' },
+      { id: 'd2', day: 'Giorno 2', title: 'Schema DB + RLS', desc: 'Migrazioni Supabase, organization_id, policy deny-by-default, test isolamento org.' },
+      { id: 'd3', day: 'Giorno 3', title: 'Auth + onboarding org', desc: 'Signup/login, creazione organizzazione, membri, ruoli, isolamento RLS.' },
+      { id: 'd4', day: 'Giorno 4', title: 'Configuratore bot', desc: 'Profilo, servizi, prezzi, orari, FAQ, regole, escalation, action permissions.' },
+      { id: 'd5', day: 'Giorno 5', title: 'WhatsApp Meta Cloud API', desc: 'Provider adapter, webhook firmato, challenge, invio/ricezione messaggi reali.' },
+      { id: 'd6', day: 'Giorno 6', title: 'AI engine + OpenAI', desc: 'LLMProvider, contesto org, risposta usando config, logging ai_runs.' },
+      { id: 'd7', day: 'Giorno 7', title: 'Consolidamento flusso base', desc: 'Test end-to-end messaggio → risposta, refactor, confini moduli puliti.' },
+      { id: 'd8', day: 'Giorno 8', title: 'Action Layer core', desc: 'Registry azioni, permessi, validazione, conferme, tool allow-list, logging.' },
+      { id: 'd9', day: 'Giorno 9', title: 'Azioni MVP', desc: 'lead.create, message.confirm, conversation.handoff, note/log.' },
+      { id: 'd10', day: 'Giorno 10', title: 'Booking Google Calendar', desc: 'BookingProvider, OAuth per-org, availability, create booking con conferma cliente.' },
+      { id: 'd11', day: 'Giorno 11', title: 'Missed-call Twilio Voice', desc: 'TelephonyProvider, numero dedicato, no-answer/busy → follow-up WhatsApp.' },
+      { id: 'd12', day: 'Giorno 12', title: 'Inbox + admin + billing placeholder', desc: 'Inbox, handoff UI, admin founder log/costi, pagina Billing base.' },
+      { id: 'd13', day: 'Giorno 13', title: 'QA sicurezza costi', desc: 'RLS test, firme webhook, deny-by-default, prompt-injection, cost_estimate.' },
+      { id: 'd14', day: 'Giorno 14', title: 'Hardening + release MVP', desc: 'Fallback, edge case, onboarding end-to-end, Definition of Done MVP.' },
+    ];
+
+    const gates = [
+      { id: 'g1', title: 'Build passa', desc: 'npm run build senza errori' },
+      { id: 'g2', title: 'Lint passa', desc: 'npm run lint senza errori' },
+      { id: 'g3', title: 'No segreti nel repo', desc: '.env.local non committato' },
+      { id: 'g4', title: 'RLS verificata', desc: 'Org A non legge Org B' },
+      { id: 'g5', title: 'Webhook firmati', desc: 'Meta/Twilio verificati' },
+      { id: 'g6', title: 'Action Layer obbligatorio', desc: 'Nessuna azione bypassa i permessi' },
+      { id: 'g7', title: 'Logging costi', desc: 'ai_runs + provider_events' },
+      { id: 'g8', title: 'MVP scope rispettato', desc: 'Niente feature future anticipate' },
+    ];
+
+    const stateKey = 'saas_bot_dashboard_state_v1';
+    const saved = JSON.parse(localStorage.getItem(stateKey) || '{}');
+    const state = {
+      tasks: saved.tasks || {},
+      gates: saved.gates || {},
+      notes: saved.notes || ''
+    };
+
+    function save() {
+      state.notes = document.getElementById('notes').value;
+      localStorage.setItem(stateKey, JSON.stringify(state));
+    }
+
+    function renderTasks() {
+      const w1 = document.getElementById('week1');
+      const w2 = document.getElementById('week2');
+      w1.innerHTML = '';
+      w2.innerHTML = '';
+      tasks.forEach((task, index) => {
+        const el = document.createElement('label');
+        el.className = 'task' + (state.tasks[task.id] ? ' done' : '');
+        el.innerHTML = `
+          <input type="checkbox" ${state.tasks[task.id] ? 'checked' : ''} data-task="${task.id}" />
+          <div><div class="task-title">${task.title}</div><div class="task-desc">${task.desc}</div></div>
+          <div class="task-day">${task.day}</div>
+        `;
+        (index < 7 ? w1 : w2).appendChild(el);
+      });
+    }
+
+    function renderGates() {
+      const wrap = document.getElementById('gates');
+      wrap.innerHTML = '';
+      gates.forEach(g => {
+        const el = document.createElement('label');
+        el.className = 'task' + (state.gates[g.id] ? ' done' : '');
+        el.innerHTML = `
+          <input type="checkbox" ${state.gates[g.id] ? 'checked' : ''} data-gate="${g.id}" />
+          <div><div class="task-title">${g.title}</div><div class="task-desc">${g.desc}</div></div>
+          <div></div>
+        `;
+        wrap.appendChild(el);
+      });
+    }
+
+    function updateProgress() {
+      const done = tasks.filter(t => state.tasks[t.id]).length;
+      const pct = Math.round((done / tasks.length) * 100);
+      document.getElementById('progressNumber').textContent = pct;
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('progressLabel').textContent = `${done} task completate su ${tasks.length}.`;
+      document.getElementById('doneCount').textContent = done;
+      document.getElementById('todoCount').textContent = tasks.length - done;
+    }
+
+    document.addEventListener('change', (e) => {
+      const task = e.target.dataset.task;
+      const gate = e.target.dataset.gate;
+      if (task) state.tasks[task] = e.target.checked;
+      if (gate) state.gates[gate] = e.target.checked;
+      save(); renderTasks(); renderGates(); updateProgress();
+    });
+
+    function resetAll() {
+      if (!confirm('Vuoi davvero resettare progressi, gate e note?')) return;
+      localStorage.removeItem(stateKey);
+      location.reload();
+    }
+
+    function exportState() {
+      save();
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'saas-bot-progress.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('notes').value = state.notes;
+    document.getElementById('notes').addEventListener('input', save);
+    renderTasks(); renderGates(); updateProgress();
+  </script>
+</body>
+</html>
